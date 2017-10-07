@@ -1,0 +1,6 @@
+---
+
+ghost_nodejs_pin_priority: 500
+ghost_nodejs_path: /usr/bin/node
+
+ghost_internal_url: http://{{ ghost_config_server.host }}:{{ ghost_config_server.port }}

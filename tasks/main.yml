@@ -1,0 +1,29 @@
+---
+
+- set_fact:
+    ghost_db_user: "{{ ghost_project_domain | regex_replace('[^A-Za-z0-9]+','') | truncate(16, True,'')}}"
+    ghost_db_name: "{{ ghost_project_domain | regex_replace('[^A-Za-z0-9]+','') }}"
+
+- set_fact:
+    ghost_db_password: "{{ lookup('password', 'files/db_credentials/' + ghost_db_user + '/' + ghost_db_name + '/mysqlpassword length=15') }}"
+
+- include: prepare.yml
+  tags: ghost_prepare
+
+- name: Check previous installation
+  stat:
+    path: "{{ ghost_install_dir }}/current/index.js"
+  register: ghost_is_installed
+
+- include: install.yml
+  when: "not ghost_is_installed.stat.exists"
+  tags: ghost_install
+
+- include: themes.yml
+  when: "ghost_themes is defined"
+  tags:
+    - ghost_themes
+
+- include: uninstall.yml
+  when: "ghost_uninstall is defined and ghost_uninstall == True"
+  tags: ghost_uninstall

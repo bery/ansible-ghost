@@ -1,0 +1,34 @@
+---
+#install stack, do not install SSL
+- name: tests - apply role
+  hosts: all
+  become: yes
+  pre_tasks:
+    - name: Update apt cache.
+      apt:
+        update_cache: yes
+        cache_valid_time: 600
+      changed_when: false
+  vars:
+    ghost_setup_skip_ssl: True
+    ghost_themes:
+      blog:
+        ghost_custom_theme_name: "blog"
+        ghost_custom_theme_repo: "https://github.com/TryGhost/Blog.git"
+        ghost_custom_theme_version: "master"
+        ghost_custom_theme_accept_hostkey: false
+        ghost_custom_theme_key_file: None
+      material:
+        ghost_custom_theme_name: "material"
+        ghost_custom_theme_repo: "https://github.com/nauzethc/ghost-material.git"
+        ghost_custom_theme_version: "master"
+        ghost_custom_theme_accept_hostkey: false
+        ghost_custom_theme_key_file: None
+
+# production is default environment
+# environment:
+#    NODE_ENV: development
+  roles:
+    - role_under_test
+
+

@@ -1,0 +1,9 @@
+---
+- name: restart ghost
+  shell: ghost restart
+  args:
+      chdir: "{{ ghost_install_dir }}"
+  sudo: yes
+  when: "not ghost_install_local"
+
+

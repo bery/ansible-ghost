@@ -1,0 +1,29 @@
+---
+
+- name: prepare - add Ghost group
+  group:
+    name: "{{ ghost_user_group }}"
+    system: yes
+    state: present
+  sudo: yes
+
+- name: prepare - add Ghost user
+  user:
+    name: "{{ ghost_user_name }}"
+    group: "{{ ghost_user_group }}"
+    createhome: yes
+    shell: /bin/false
+    system: yes
+    state: present
+  sudo: yes
+
+- name: Install Ghost cli package
+  npm:
+    name: ghost-cli@1.1.1
+    global: yes
+    state: present
+
+- name: Create ghost install directory
+  file:
+    path: "{{ ghost_install_dir }}"
+    state: directory

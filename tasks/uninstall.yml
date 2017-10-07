@@ -1,0 +1,6 @@
+---
+
+- name: Install Ghost - setup SSL
+  shell: "ghost uninstall --no-prompt"
+  args:
+    chdir: "{{ ghost_install_dir }}"

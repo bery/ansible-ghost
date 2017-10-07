@@ -1,0 +1,16 @@
+---
+- name: tests - apply role
+  hosts: all
+  become: yes
+  pre_tasks:
+    - name: Update apt cache.
+      apt:
+        update_cache: yes
+        cache_valid_time: 600
+      changed_when: false
+  vars:
+    ghost_uninstall: True
+  roles:
+    - role_under_test
+
+

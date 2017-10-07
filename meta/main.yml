@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Lukas Beranek
+  description: Role for installing Ghost, a blogging platform.
+  license: BSD
+  min_ansible_version: 2.3
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial
+  categories:
+  - web
+dependencies:
+  - {role: geerlingguy.nodejs}
+  - {role: tersmitten.percona-server, when: not ghost_install_local}
+  - {role: geerlingguy.nginx , nginx_ppa_use: True, when: not ghost_install_local}

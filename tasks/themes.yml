@@ -1,0 +1,31 @@
+---
+
+- name: Ghost | Installing git
+  apt:
+    name: git
+    state: present
+
+- name: Ghost | Check if the theme exists
+  stat: |
+    path="{{ ghost_install_dir }}/current/content/themes/{{ item.key }}"
+  with_dict: "{{ ghost_themes }}"
+  
+- name: Ghost | Update custom theme
+  with_dict: "{{ ghost_themes }}"
+  git:
+    repo: "{{ item.value.ghost_custom_theme_repo }}"
+    dest: "{{ ghost_install_dir }}/content/themes/{{ item.key }}"
+    version: "{{ item.value.ghost_custom_theme_version }}"
+    accept_hostkey: "{{ item.value.ghost_custom_theme_accept_hostkey|bool }}"
+    key_file: "{{ item.value.ghost_custom_theme_key_file }}"
+    accept_hostkey: yes
+  notify: restart ghost
+
+- name: verify permissions
+  file:
+    path: "{{ ghost_install_dir }}"
+    state: directory
+    owner: "{{ ghost_user_name }}"
+    group: "{{ ghost_user_group }}"
+    recurse: yes
+

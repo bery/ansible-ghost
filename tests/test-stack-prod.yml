@@ -1,0 +1,20 @@
+---
+#install stack, do not install SSL
+- name: tests - apply role
+  hosts: all
+  become: yes
+  pre_tasks:
+    - name: Update apt cache.
+      apt:
+        update_cache: yes
+        cache_valid_time: 600
+      changed_when: false
+  vars:
+    - ghost_setup_skip_ssl: True
+# production is default environment
+# environment:
+#    NODE_ENV: development
+  roles:
+    - role_under_test
+
+
