@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Lukas Beranek
-  description: Role for installing Ghost, a blogging platform.
+  description: Role for installing Ghost, a blogging platform using Ghost CLI.
   license: BSD
   min_ansible_version: 2.3
   platforms:
