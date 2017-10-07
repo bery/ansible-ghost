@@ -1,0 +1,7 @@
+---
+
+- name: Install Ghost cli package
+  npm:
+    name: "ghost-cli@{{ ghost_cli_version }}"
+    global: yes
+    state: present

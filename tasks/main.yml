@@ -16,6 +16,9 @@
   tags: ghost_prepare
   when: "ghost_cli_version_rc == 1"
 
+- include: prepare.yml
+  tags: ghost_prepare
+
 - name: Check previous installation
   stat:
     path: "{{ ghost_install_dir }}/current/index.js"
