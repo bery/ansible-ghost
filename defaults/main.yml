@@ -26,3 +26,5 @@ ghost_smtp_port: 2525
 ghost_install_dir: "/var/www/users/{{ ghost_user_name }}/{{ ghost_project_domain }}"
 
 ghost_service_name: "ghost_{{ ghost_config_server.port }}"
+
+ghost_cli_version: 1.1.1

@@ -7,8 +7,14 @@
 - set_fact:
     ghost_db_password: "{{ lookup('password', 'files/db_credentials/' + ghost_db_user + '/' + ghost_db_name + '/mysqlpassword length=15') }}"
 
+- name: Check installed Ghost CLI version
+  shell: "ghost version | grep {{ ghost_cli_version }}"
+  register: ghost_cli_version_rc
+
+#if rc = 1 there is a new ghost cli version available or it hasn't been installed yet
 - include: prepare.yml
   tags: ghost_prepare
+  when: "ghost_cli_version_rc == 1"
 
 - name: Check previous installation
   stat:
