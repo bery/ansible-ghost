@@ -1,64 +1,78 @@
-Ghost [![Build Status](https://travis-ci.org/mtpereira/ansible-ghost.svg)](https://travis-ci.org/mtpereira/ansible-ghost)
+Ghost
 =========
 
-Installs Ghost, a blogging platform. By default it'll install the latest Ghost version available from [Ghost's homepage](https://ghost.org).
+Installs Ghost, a blogging platform using Ghost CLI. By default it'll install the latest Ghost version available from [Ghost's homepage](https://ghost.org).
 
-By default, it installs the latest Node version available on [Nodesource's repository](https://deb.nodesource.com/node/) using the [nodesource.node](https://galaxy.ansible.com/list#/roles/1488) role.
+By default, it installs 6.x NodeJs version available on [Nodesource's repository](https://deb.nodesource.com/node/) using the [geerlingguy.nodejs](https://github.com/geerlingguy/ansible-role-nodejs) role.
 
-By default, it installs and configures a Nginx proxy using the [jdauphant.nginx](https://galaxy.ansible.com/list#/roles/466) role.
+By default, it installs and configures Nginx proxy using the [geerlingguy.nginx](https://github.com/geerlingguy/ansible-role-nginx) role.
 
-This role also takes care of Ghost's [issue #2639](https://github.com/TryGhost/Ghost/issues/2639) on hosts using libc 2.13 or older, making sure that npm's sqlite3 is compiled beforehand. This has been tested and verified to work on Debian Wheezy.
+By default, it installs and configures Perconna database [tersmitten.percona-server](https://github.com/Oefenweb/ansible-percona-server) role.
+
+All of this is possible because of Ghost's CLI tools. For more reference see [the repo](https://github.com/TryGhost/Ghost-CLI) or the [docs](https://docs.ghost.org/v1/docs/ghost-cli).
 
 Requirements
 ------------
 
-None.
+* Role is tested and developed for Ubuntu Xenial (16.04 LTS).
+* Mailgun account for production.
+* See role dependencies for more info.
+
+Installation modes
+--------------
+* Production [default] - full blown LEMP stack with SSL proxy, **requires valid domain name**
+* Local - useful for development, without LEMP stack and SSL or nginx proxy (http://localhost:2368)
+* Non-production with stack - useful for development, without LEMP stack (http://localhost)
 
 Role Variables
 --------------
 
-Required variables:
-
-* `ghost_install_dir`: Directory where Ghost will be installed. It is also the home of the user that runs Ghost. Defaults to `/var/www/ghost'.
-* `ghost_user_name`: Username for the user that runs Ghost. Defaults to `ghost`.
-* `ghost_user_group`: Group for the user that runs Ghost. Defaults to `ghost`.
-* `ghost_config_mail`: Ghost's [mail configuration](http://support.ghost.org/mail/). It expects a YAML dictonary. Defaults to `{}`.
-* `ghosts_config_database`: Ghost's [database configuration](http://support.ghost.org/config/#database). It expects a YAML dictionary. Defaults configure a sqlite3 database, which is Ghost's default.
-* `ghosts_config_server`: Ghost's [server configuration](http://support.ghost.org/config/#server). It expects a YAML dictionary. Defaults to localhost on port 2368.
-* `ghost_nodejs_enabled`: Enables or disables installing nodejs. Defaults to `yes`.
-* `ghost_nginx_enabled`: Enables or disables configuring a nginx proxy. Defaults to `yes`.
-* `ghost_nginx_port`: Defines the nginx listening port. Defaults to `80`.
-
-Internal variables, avoid changing:
-
-* `ghost_fetch_url`: URL used for fetching Ghost. Defaults to `https://ghost.org/zip/ghost-latest.zip`.
-* `ghost_fetch_dir`: Directory to store the Ghost zip. Defaults to `/tmp`.
-* `ghost_nodejs_pin_priority`: Pin for `apt-preferences`. Defaults to `500`.
-* `ghost_nodejs_path`: Nodejs binary path. Defaults to `/usr/bin/node`.
-* `ghost_nginx_sites`: Nginx sites configuration passed to [jdauphant.nginx](https://galaxy.ansible.com/list#/roles/466) role. Check its README for more information. The defaults configure a reverse proxy listening on port 80 and denying access to Ghost's admin page except for requests originated from localhost.
+* `ghost_install_local: False` - development installations only, install blog on http://localhost:2368 (or next free port)
+* `ghost_setup_skip_ssl: False` - skip SSL cert installation - good for stack testing without SSL [http://localhost]
+* `ghost_letsencrypt_user: user@example.com` - email for LE notifications and consent
+* `ghost_project_domain: localhost` - default domain
+* `ghost_project_url: "http://{{ ghost_project_domain }}"` - unsecure URL
+* `ghost_project_url_secure: "https://{{ ghost_project_domain }}"` - secure URL
+* `ghost_user_name: ghost` - default system user - DO NOT CHANGE
+* `ghost_user_group: ghost` - default system group - DO NOT CHANGE
+* `ghost_db: mysql` - DB host, can be sqlite3
+* `ghost_db_host: localhost` 
+* `ghost_db_user: "{{ ghost_user_name }}"` - currently gerenated from domain name
+* `ghost_db_name: "{{ ghost_user_name }}"` - currently gerenated from domain name
+* `ghost_db_password: "{{ ghost_db_user }}"` - currently gerenated from domain name and stored in files/db_credentials/
+* `ghost_smtp: SMTP` - SMTP service 
+* `ghost_smtp_service: Mailgun` - use Mailgun as default service see [docs](https://docs.ghost.org/v1/docs/mail-config)
+* `ghost_smtp_user: ''` - postmaster@yourdomain.com
+* `ghost_smtp_password: ''` - default password for postmaster@yourdomain.com 
+* `ghost_smtp_port: 2525` - alternative Mailgun port that works on Google Compute Engine (by default Mailgun uses TCP 587)
+* `ghost_install_dir: "/var/www/users/{{ ghost_user_name }}/{{ ghost_project_domain }}"` - install directory
+* `ghost_cli_version: 1.1.1`
 
 Dependencies
 ------------
 
-* [nodesource.node](https://galaxy.ansible.com/list#/roles/1488)
-* [jdauphant.nginx](https://galaxy.ansible.com/list#/roles/466)
+* [geerlingguy.nodejs](https://github.com/geerlingguy/ansible-role-nodejs) role.
+* [geerlingguy.nginx](https://github.com/geerlingguy/ansible-role-nginx) role.
+* [tersmitten.percona-server](https://github.com/Oefenweb/ansible-percona-server) role.
 
-These roles can be installed by running `ansible-galaxy install -r requirements.yml`.
 
-Local Testing
+These roles can be installed by running `ansible-galaxy install -r tests/requirements.yml`.
+
+Testing
 -------
+* `vagrant up` 
+* `./test.sh` 
 
-Tests can be ran on Debian Wheezy and Ubuntu Trusty boxes by executing "vagrant up". There are the following ENV variables:
-
-* `ANSIBLE_TAGS`: A list of tags, comma-separated, that will be ran by Ansible. Defaults to `all`.
-* `ANSIBLE_VERBOSE`: Ansible's verbosity level. Defaults to `v`.
+Advanced Testing using Docker
+-------
+* see tests/README.md 
 
 Example Playbook
 ----------------
 
     - hosts: servers
       roles:
-         - mtpereira.ghost
+         - bery.ghost
 
 License
 -------
@@ -68,10 +82,11 @@ BSD
 Author Information
 ------------------
 
-Thanks to [nodesource](https://nodesource.com/) for the Nodejs packages repository and Ansible role.
+Thanks to [Manuel Tiago Pereira](http://mtpereira.github.io) for original role.
 
-Thanks to [jdauphant](https://github.com/jdauphant/) for the Nginx role.
+Thanks to [Jeff Geerling](https://github.com/geerlingguy) for both Nginx and NodeJs roles.
 
-[GitHub project page](https://github.com/mtpereira/ansible-ghost)
+Thanks to [Oefenweb.nl](https://github.com/Oefenweb) for both Nginx and NodeJs roles.
 
-[Manuel Tiago Pereira](http://mtpereira.github.io)
+[GitHub project page](https://github.com/bery/ansible-ghost)
+
