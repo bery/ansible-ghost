@@ -48,6 +48,35 @@ Role Variables
 * `ghost_install_dir: "/var/www/users/{{ ghost_user_name }}/{{ ghost_project_domain }}"` - install directory
 * `ghost_cli_version: 1.1.1`
 
+Uninstalling Ghost
+--------------
+* `ghost_uninstall` set to True
+* run the playbook in `ghost_install_dir`
+
+Using custom themes
+--------------
+* `ghost_themes` is a dictonary and when defined a custom theme will be installed to the themes directory
+```
+ghost_themes:
+      blog:
+        ghost_custom_theme_name: "blog"
+        ghost_custom_theme_repo: "https://github.com/TryGhost/Blog.git"
+        ghost_custom_theme_version: "master"
+        ghost_custom_theme_accept_hostkey: false
+        ghost_custom_theme_key_file: None
+```
+* for more examples see playbooks in tests directory
+
+Future work
+--------------
+* travis tests
+* support updates [with custom themes]
+* new relic support
+* add nginx pagespeed support
+* resolve nginx redirects to SSL
+* make SSL installation faster (populating dhparam file takes long time)
+* support more CLI features as they are added
+
 Dependencies
 ------------
 
