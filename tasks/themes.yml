@@ -18,7 +18,6 @@
     version: "{{ item.value.ghost_custom_theme_version }}"
     accept_hostkey: "{{ item.value.ghost_custom_theme_accept_hostkey|bool }}"
     key_file: "{{ item.value.ghost_custom_theme_key_file }}"
-    accept_hostkey: yes
   notify: restart ghost
 
 - name: verify permissions

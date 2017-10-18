@@ -10,11 +10,13 @@
 - name: Check installed Ghost CLI version
   shell: "ghost version | grep {{ ghost_cli_version }}"
   register: ghost_cli_version_rc
+  ignore_errors: yes
 
+- debug: var=ghost_cli_version_rc
 #if rc = 1 there is a new ghost cli version available or it hasn't been installed yet
-- include: prepare.yml
+- include: prepare_cli.yml
   tags: ghost_prepare
-  when: "ghost_cli_version_rc == 1"
+  when: "ghost_cli_version_rc.rc == 1"
 
 - include: prepare.yml
   tags: ghost_prepare

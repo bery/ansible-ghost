@@ -23,7 +23,7 @@
   when: "not ghost_install_local"
 
 - name: Install ghost - stack version
-  shell: ghost install --url={{ ghost_project_url }} --db={{ ghost_db }} --dbhost={{ ghost_db_host }} --dbuser={{ ghost_db_user }} --dbpass={{ ghost_db_password }} --dbname={{ ghost_db_name }} --mail={{ ghost_smtp }} --mailservice={{ ghost_smtp_service }} --mailuser={{ ghost_smtp_user }} --mailpass={{ ghost_smtp_password }} --mailport={{ ghost_smtp_port }} --sslemail={{ ghost_letsencrypt_user }} --no-setup-ssl --no-prompt --start
+  shell: "ghost install --url={{ ghost_project_url }} --db={{ ghost_db }} --dbhost={{ ghost_db_host }} --dbuser={{ ghost_db_user }} --dbpass={{ ghost_db_password }} --dbname={{ ghost_db_name }} --mail={{ ghost_smtp }} --mailservice={{ ghost_smtp_service }} --mailuser={{ ghost_smtp_user }} --mailpass={{ ghost_smtp_password }} --mailport={{ ghost_smtp_port }} --sslemail={{ ghost_letsencrypt_user }} --no-setup-ssl --no-prompt --start"
   args:
     chdir: "{{ ghost_install_dir }}"
   when: "not ghost_install_local"
@@ -32,4 +32,13 @@
   shell: "ghost config url {{ ghost_project_url_secure }} && ghost setup ssl --sslemail={{ ghost_letsencrypt_user }} --no-prompt"
   args:
     chdir: "{{ ghost_install_dir }}"
+  when: "not ghost_setup_skip_ssl and not ghost_install_local"
+
+- name: Force redirect to ssl
+  lineinfile:
+    path: "/etc/nginx/sites-available/localhost.conf"
+    regexp: "^rewrite     ^"
+    insertafter: 'server_name'
+    line: "rewrite     ^   https://$server_name$request_uri? permanent;"
+    state: present
   when: "not ghost_setup_skip_ssl and not ghost_install_local"
