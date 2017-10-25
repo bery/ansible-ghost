@@ -42,3 +42,10 @@
     line: "rewrite     ^   https://$server_name$request_uri? permanent;"
     state: present
   when: "not ghost_setup_skip_ssl and not ghost_install_local"
+
+- name: Install Ghost - setup SSL
+  shell: "ghost config mail.from {{ ghost_mail_from }}"
+  args:
+    chdir: "{{ ghost_install_dir }}"
+  when: "ghost_mail_from is defined"
+
