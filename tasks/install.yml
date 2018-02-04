@@ -34,14 +34,14 @@
     chdir: "{{ ghost_install_dir }}"
   when: "not ghost_setup_skip_ssl and not ghost_install_local"
 
-- name: Force redirect to ssl
-  lineinfile:
-    path: "/etc/nginx/sites-available/localhost.conf"
-    regexp: "^rewrite     ^"
-    insertafter: 'server_name'
-    line: "rewrite     ^   https://$server_name$request_uri? permanent;"
-    state: present
-  when: "not ghost_setup_skip_ssl and not ghost_install_local"
+#- name: Force redirect to ssl
+#  lineinfile:
+#    path: "/etc/nginx/sites-available/localhost.conf"
+#    regexp: "^rewrite     ^"
+#    insertafter: 'server_name'
+#    line: "rewrite     ^   https://$server_name$request_uri? permanent;"
+#    state: present
+# when: "not ghost_setup_skip_ssl and not ghost_install_local"
 
 - name: Install Ghost - setup SSL
   shell: "ghost config mail.from {{ ghost_mail_from }}"
