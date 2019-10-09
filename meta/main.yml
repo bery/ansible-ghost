@@ -12,5 +12,5 @@ galaxy_info:
   - web
 dependencies:
   - {role: geerlingguy.nodejs}
-  - {role: tersmitten.percona-server, when: not ghost_install_local}
+  - {role: oefenweb.percona-server, when: not ghost_install_local}
   - {role: geerlingguy.nginx , nginx_ppa_use: True, when: not ghost_install_local}
